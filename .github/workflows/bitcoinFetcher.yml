@@ -1,0 +1,15 @@
+name: Build bitcoinFetcher
+
+on:
+  push:
+    branches: [ "master" ]
+    paths:
+      - apps/bitcoinFetcher/**
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v3
+    - name: Build the Docker image
+      run: docker build ./apps/bitcoinFetcher --file Dockerfile --tag bitcoinFetcher:$(date +%s)
