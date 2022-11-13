@@ -1,10 +1,10 @@
-name: Build bitcoin-fetcher
+name: Build 200responder
 
 on:
   push:
     branches: [ "master" ]
     paths:
-      - apps/bitcoin-fetcher/**
+      - apps/200responder/**
   pull_request:
     branches: [ "master" ]
   workflow_dispatch:
@@ -19,8 +19,8 @@ jobs:
     runs-on: ubuntu-latest
     defaults:
       run:
-        working-directory: ./apps/bitcoin-fetcher
+        working-directory: ./apps/200responder
     steps:
     - uses: actions/checkout@v3
     - name: Build the Docker image
-      run: docker build . --tag bitcoin-fetcher:latest
+      run: docker build . --tag 200responder:latest
