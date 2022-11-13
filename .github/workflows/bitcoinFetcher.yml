@@ -3,13 +3,16 @@ name: Build bitcoin-fetcher
 on:
   push:
     branches: [ "master" ]
-    paths:
-      - apps/bitcoin-fetcher/**
+    # paths:
+      # - apps/bitcoin-fetcher/**
+  pull_request:
+    branches: [ "master" ]
 
 jobs:
   build:
     runs-on: ubuntu-latest
+    working-directory: apps\200responder
     steps:
     - uses: actions/checkout@v3
     - name: Build the Docker image
-      run: docker build ./apps/bitcoin-fetcher --file Dockerfile --tag bitcoin-fetcher:$(date +%s)
+      run: docker build . --tag bitcoin-fetcher:$(date +%s)
