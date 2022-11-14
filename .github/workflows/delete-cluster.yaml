@@ -1,8 +1,8 @@
 on: 
   workflow_dispatch:
     inputs:
-      reason: 
-        description: 'Resource Group To Delete'
+      resource-group: 
+        description: 'Resource Group Name To Delete'
         required: true
         default: 'btc-assignment'
 
@@ -26,10 +26,9 @@ jobs:
     #     inlineScript: |
     #       chmod +x $GITHUB_WORKSPACE/sampleScript.sh
     #       $GITHUB_WORKSPACE/sampleScript.sh
-    - name: Azure CLI script
+    - name: Delete Cluster
       uses: azure/CLI@v1
       with:
         azcliversion: 2.42.0
         inlineScript: |
-          az account show
-          az storage -h
+          az group delete --name ${{ github.event.inputs.resource-group }} --yes
