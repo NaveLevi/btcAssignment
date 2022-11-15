@@ -6,6 +6,10 @@ on:
         required: true
         default: 'btc-assignment'
 
+env:
+  KUBECONFIG: ${GITHUB_WORKSPACE}/_output/${{ github.event.inputs.cluster-name }}/kubeconfig/kubeconfig.northeurope.json
+
+
 name: create-cluster
 jobs:
   create-cluster:
@@ -24,6 +28,7 @@ jobs:
       with:
         azcliversion: 2.42.0
         inlineScript: |
+          echo ${{ env.KUBECONFIG }}
           curl -o get-akse.sh https://raw.githubusercontent.com/Azure/aks-engine/master/scripts/get-akse.sh
           chmod 700 get-akse.sh
           ./get-akse.sh
@@ -31,9 +36,9 @@ jobs:
 
     - name: Set Kubeconfig as env var
       run: |
-        kubeconfig=$(cat ./_output/${{ github.event.inputs.cluster-name }}/kubeconfig/kubeconfig.northeurope.json | base64 -w 0)
-        echo "::add-mask::$kubeconfig"
-        echo "KUBECONFIG=$kubeconfig" >> $GITHUB_ENV
+        kube_config=$(cat ./_output/${{ github.event.inputs.cluster-name }}/kubeconfig/kubeconfig.northeurope.json | base64 -w 0)
+        echo "::add-mask::$kube_config"
+        echo "KUBE_CONFIG=$kube_config" >> $GITHUB_ENV
 
     - name: Upload Kubeconfig
       uses: gliech/create-github-secret-action@v1
