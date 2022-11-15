@@ -33,20 +33,18 @@ jobs:
           ./get-akse.sh
           aks-engine deploy --location northeurope --api-model ./kubernetes/kubernetes.json -g ${{ github.event.inputs.cluster-name }} -p ${{ github.event.inputs.cluster-name }} -o aks-engine-output
           chmod 777 ./aks-engine-output/kubeconfig/kubeconfig.northeurope.json
-
-    - name: chmod test1
-      run: chmod 777 ./aks-engine-output/kubeconfig/kubeconfig.northeurope.json
-
-    - name: chmod test2
-      run: chmod 777 $KUBECONFIG_PATH
+          kube_config=$(cat ${{ env.KUBECONFIG_PATH }} | base64 -w 0)
+          echo $kube_config #TODO: remove
+          echo "::add-mask::$kube_config"
+          echo "KUBE_CONFIG=$kube_config" >> $GITHUB_ENV
 
 
-    - name: Set Kubeconfig as env var (chmod test3)
-      run: |
-        chmod 777 ${{ env.KUBECONFIG_PATH }}
-        kube_config=$(cat ${{ env.KUBECONFIG_PATH }} | base64 -w 0)
-        echo "::add-mask::$kube_config"
-        echo "KUBE_CONFIG=$kube_config" >> $GITHUB_ENV
+    # - name: Set Kubeconfig as env var (chmod test3)
+    #   run: |
+    #     kube_config=$(cat ${{ env.KUBECONFIG_PATH }} | base64 -w 0)
+    #     echo $kube_config #TODO: remove
+    #     echo "::add-mask::$kube_config"
+    #     echo "KUBE_CONFIG=$kube_config" >> $GITHUB_ENV
 
     - name: Upload Kubeconfig
       uses: gliech/create-github-secret-action@v1
