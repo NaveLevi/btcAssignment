@@ -35,6 +35,9 @@ jobs:
 
     - name: Set Kubeconfig as env var
       run: |
+        stat ${{ env.KUBECONFIG_PATH }}
+        chmod 400 ${{ env.KUBECONFIG_PATH }}
+        stat ${{ env.KUBECONFIG_PATH }}
         kube_config=$(cat ${{ env.KUBECONFIG_PATH }} | base64 -w 0)
         echo "::add-mask::$kube_config"
         echo "KUBE_CONFIG=$kube_config" >> $GITHUB_ENV
