@@ -2,7 +2,7 @@ on:
   workflow_dispatch:
     inputs:
       cluster-name: 
-        description: 'cluster name. Used for dns-prefix and resource group name'
+        description: 'cluster name. Used for dns-prefix and resource-group name'
         required: true
         default: 'btc-assignment'
 
@@ -27,15 +27,16 @@ jobs:
           curl -o get-akse.sh https://raw.githubusercontent.com/Azure/aks-engine/master/scripts/get-akse.sh
           chmod 700 get-akse.sh
           ./get-akse.sh
-          aks-engine deploy --location northeurope --api-model ./kubernetes/kubernetes.json -g ${{ github.event.inputs.cluster-name }} -p -g ${{ github.event.inputs.cluster-name }}
+          aks-engine deploy --location northeurope --api-model ./kubernetes/kubernetes.json -g ${{ github.event.inputs.cluster-name }} -p ${{ github.event.inputs.cluster-name }}
 
-    - name: set-variable
+    - name: Set Kubeconfig as env var
       run: |
         kubeconfig=$(cat ./_output/${{ github.event.inputs.cluster-name }}/kubeconfig/kubeconfig.northeurope.json | base64 -w 0)
         echo "::add-mask::$kubeconfig"
         echo "KUBECONFIG=$kubeconfig" >> $GITHUB_ENV
 
-    - uses: gliech/create-github-secret-action@v1
+    - name: Upload Kubeconfig
+      uses: gliech/create-github-secret-action@v1
       with:
         name: KUBECONFIG
         value: ${{ env.KUBECONFIG }}
