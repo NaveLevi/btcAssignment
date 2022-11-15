@@ -25,11 +25,6 @@ jobs:
         version: 'v3.10.1'
       id: install
 
-    # - uses: azure/setup-kubectl@v3
-    #   with:
-    #     version: 'v1.24.2'
-    #   id: install
-
     - name: get kubeconfig
       run: |
         mkdir -p ~/.kube
@@ -43,7 +38,7 @@ jobs:
       run: |
         helm repo add ingress-nginx https://kubernetes.github.io/ingress-nginx
         helm repo update
-        helm install nginx-ingress ingress-nginx/ingress-nginx
+        helm upgrade --install --create-namespace -n nginx-ingress nginx-ingress ingress-nginx/ingress-nginx
     - name: get pods
       run: |
         kubectl get pods -n nginx-ingress
