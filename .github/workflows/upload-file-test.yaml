@@ -18,11 +18,15 @@ jobs:
       run: pwd
     - name: ls
       run: ls -lah
+
     - name: set-variable
       run: |
-        kubeconfig=$(cat kubernetes/testFile.yaml | base64)
-        echo $kubeconfig
+        kubeconfig=$(cat kubernetes/kubeconfig.northeurope.json | base64 -w 0)
+        echo "::add-mask::$kubeconfig"
         echo "KUBECONFIG=$kubeconfig" >> $GITHUB_ENV
 
-
-      # echo "::set-env name=KUBECONFIG2::$kubeconfig"
+    - uses: gliech/create-github-secret-action@v1
+      with:
+        name: KUBECONFIG
+        value: ${{ env.KUBECONFIG }}
+        pa_token: ${{ secrets.GH_TOKEN }}
