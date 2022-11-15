@@ -10,7 +10,7 @@ env:
   KUBECONFIG_PATH: ./aks-engine-output/kubeconfig/kubeconfig.northeurope.json
 
 
-name: create-cluster
+name: create-and-configure-cluster
 jobs:
   create-cluster:
     runs-on: ubuntu-latest
@@ -31,20 +31,11 @@ jobs:
           curl -o get-akse.sh https://raw.githubusercontent.com/Azure/aks-engine/master/scripts/get-akse.sh
           chmod 700 get-akse.sh
           ./get-akse.sh
-          aks-engine deploy --location northeurope --api-model ./kubernetes/kubernetes.json -g ${{ github.event.inputs.cluster-name }} -p ${{ github.event.inputs.cluster-name }} -o aks-engine-output
-          chmod 777 ./aks-engine-output/kubeconfig/kubeconfig.northeurope.json
-          kube_config=$(cat ${{ env.KUBECONFIG_PATH }} | base64 -w 0)
-          echo $kube_config #TODO: remove
-          echo "::add-mask::$kube_config"
-          echo "KUBE_CONFIG=$kube_config" >> $GITHUB_ENV
-
-
-    # - name: Set Kubeconfig as env var (chmod test3)
-    #   run: |
-    #     kube_config=$(cat ${{ env.KUBECONFIG_PATH }} | base64 -w 0)
-    #     echo $kube_config #TODO: remove
-    #     echo "::add-mask::$kube_config"
-    #     echo "KUBE_CONFIG=$kube_config" >> $GITHUB_ENV
+          aks-engine deploy --location northeurope --api-model ./kubernetes/kubernetes.json -g ${{ github.event.inputs.cluster-name }} -p ${{ github.event.inputs.cluster-name }} -o "./aks-engine-output"
+          kube_config_data=$(cat ${{ env.KUBECONFIG_PATH }} | base64 -w 0)
+          echo $kube_config_data #TODO: remove
+          echo "::add-mask::$kube_config_data"
+          echo "KUBE_CONFIG=$kube_config_data" >> $GITHUB_ENV
 
     - name: Upload Kubeconfig
       uses: gliech/create-github-secret-action@v1
@@ -53,3 +44,26 @@ jobs:
         value: ${{ env.KUBE_CONFIG }}
         pa_token: ${{ secrets.GH_TOKEN }}
 
+  deploy-nginx-ingress:
+    runs-on: ubuntu-latest
+    needs: create-cluster
+    steps:
+    - name: wait for cluster to be ready
+      run: sleep 300
+    - uses: azure/setup-helm@v3
+      with:
+        version: 'v3.10.1'
+      id: install
+    - name: get kubeconfig
+      run: |
+        mkdir -p ~/.kube
+        echo ${{ secrets.KUBE_CONFIG }} | base64 -d > $HOME/.kube/config
+    - name: install nginx-ingress
+      run: |
+        kubectl get ns
+        helm repo add ingress-nginx https://kubernetes.github.io/ingress-nginx
+        helm repo update
+        helm install --create-namespace -n nginx-ingress nginx-ingress ingress-nginx/ingress-nginx
+    - name: get pods
+      run: |
+        kubectl get pods -n nginx-ingress
