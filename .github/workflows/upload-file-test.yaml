@@ -11,11 +11,6 @@ jobs:
   create-secret-test:
     runs-on: ubuntu-latest
     steps:
-    - name: Azure Login
-      uses: azure/login@v1
-      with:
-        creds: ${{ secrets.AZURE_CREDENTIALS }}
-
     - name: Checkout
       uses: actions/checkout@v1
 
@@ -25,7 +20,7 @@ jobs:
       run: ls -lah
     - name: set-variable
       run: |
-        kubeconfig=$(cat kubernetes/kubernetes.json | base64)
+        kubeconfig=$(cat kubernetes/testFile.yaml | base64)
         echo $kubeconfig
         echo "KUBECONFIG=$kubeconfig" >> $GITHUB_ENV
 
