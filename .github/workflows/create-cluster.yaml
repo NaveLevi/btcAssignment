@@ -28,7 +28,7 @@ jobs:
       with:
         azcliversion: 2.42.0
         inlineScript: |
-          echo ${{ env.KUBECONFIG }}
+          ls ${{ env.KUBECONFIG }}
           curl -o get-akse.sh https://raw.githubusercontent.com/Azure/aks-engine/master/scripts/get-akse.sh
           chmod 700 get-akse.sh
           ./get-akse.sh
