@@ -37,7 +37,6 @@ jobs:
         path: ./kubernetes/kubernetes.json
         if-no-files-found: error
 
-
     - name: Create Cluster
       uses: azure/CLI@v1
       with:
@@ -52,10 +51,6 @@ jobs:
       run: pwd
     - name: ls
       run: ls -lah
-    - name: find
-      run: find . -name kubeconfig.northeurope.json
-    - name: find2
-      run: find .
 
     # - name: Create Cluster
     #   run: |
