@@ -1,8 +1,8 @@
 on: 
   workflow_dispatch:
     inputs:
-      dns-prefix: 
-        description: 'dns-prefix for the cluster (also the resource group name)'
+      cluster-name: 
+        description: 'cluster name. Used for dns-prefix and resource group name'
         required: true
         default: 'btc-assignment'
 
@@ -18,24 +18,6 @@ jobs:
 
     - name: Checkout
       uses: actions/checkout@v1
-    # - name: Install aks-engine
-    #   run: |
-    #     curl -o get-akse.sh https://raw.githubusercontent.com/Azure/aks-engine/master/scripts/get-akse.sh
-    #     chmod 700 get-akse.sh
-    #     ./get-akse.sh
-    #     type aks-engine
-
-    - name: pwd
-      run: pwd
-    - name: ls
-      run: ls -lah
-
-    - name: Upload kubeconfig
-      uses: actions/upload-artifact@v2
-      with:
-        name: kubernetes-conf-tmp.json
-        path: ./kubernetes/kubernetes.json
-        if-no-files-found: error
 
     - name: Create Cluster
       uses: azure/CLI@v1
@@ -45,36 +27,17 @@ jobs:
           curl -o get-akse.sh https://raw.githubusercontent.com/Azure/aks-engine/master/scripts/get-akse.sh
           chmod 700 get-akse.sh
           ./get-akse.sh
-          type aks-engine
-          aks-engine deploy --location northeurope --api-model ./kubernetes/kubernetes.json --dns-prefix ${{ github.event.inputs.dns-prefix }}
-    - name: pwd
-      run: pwd
-    - name: ls
-      run: ls -lah
+          aks-engine deploy --location northeurope --api-model ./kubernetes/kubernetes.json -g ${{ github.event.inputs.cluster-name }} -p -g ${{ github.event.inputs.cluster-name }}
 
-    # - name: Create Cluster
-    #   run: |
-    #     aks-engine deploy --location northeurope --api-model ${{ GITHUB_WORKSPACE/kubernetes/kubernetes.json }} --dns-prefix ${{ github.event.inputs.dns-prefix }}
-    - name: Upload kubeconfig
-      uses: actions/upload-artifact@v2
+    - name: set-variable
+      run: |
+        kubeconfig=$(cat ./_output/${{ github.event.inputs.cluster-name }}/kubeconfig/kubeconfig.northeurope.json | base64 -w 0)
+        echo "::add-mask::$kubeconfig"
+        echo "KUBECONFIG=$kubeconfig" >> $GITHUB_ENV
+
+    - uses: gliech/create-github-secret-action@v1
       with:
-        name: kubeconfig
-        path: ./_output/${{ github.event.inputs.dns-prefix }}/kubeconfig/kubeconfig.northeurope.json
-        if-no-files-found: error
+        name: KUBECONFIG
+        value: ${{ env.KUBECONFIG }}
+        pa_token: ${{ secrets.GH_TOKEN }}
 
-    # - name: Azure CLI script file
-    #   uses: azure/CLI@v1
-    #   with:
-    #     azcliversion: 2.42.0
-    #     inlineScript: |
-    #       chmod +x $GITHUB_WORKSPACE/sampleScript.sh
-    #       $GITHUB_WORKSPACE/sampleScript.sh
-    # - name: Delete Cluster
-    #   uses: azure/CLI@v1
-    #   with:
-    #     azcliversion: 2.42.0
-    #     inlineScript: |
-    #       az group delete --name ${{ github.event.inputs.resource-group }} --yes
-
-
-# aks-engine deploy --location northeurope --api-model kubernetes/kubernetes.json --dns-prefix btc-assignment

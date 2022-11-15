@@ -8,7 +8,7 @@ on:
 
 name: delete-cluster
 jobs:
-  build-and-deploy:
+  delete-cluster:
     runs-on: ubuntu-latest
     steps:
     - name: Azure Login
@@ -19,13 +19,6 @@ jobs:
     - name: Checkout
       uses: actions/checkout@v1
 
-    # - name: Azure CLI script file
-    #   uses: azure/CLI@v1
-    #   with:
-    #     azcliversion: 2.42.0
-    #     inlineScript: |
-    #       chmod +x $GITHUB_WORKSPACE/sampleScript.sh
-    #       $GITHUB_WORKSPACE/sampleScript.sh
     - name: Delete Cluster
       uses: azure/CLI@v1
       with:
