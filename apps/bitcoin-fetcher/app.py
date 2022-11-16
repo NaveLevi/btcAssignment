@@ -5,14 +5,11 @@ from apscheduler.schedulers.background import BackgroundScheduler
 
 url = 'https://api.coingecko.com/api/v3/simple/price?ids=bitcoin&vs_currencies=eur'
 
-
 from flask import Flask
 app = Flask(__name__)
 
-
 lastRate, lastAverage = float, float
 lastAverage, fetchCount, sum = 0, 0, 0
-
 
 def fetchCurrentRate():
     global lastRate, lastAverage, fetchCount, sum
@@ -31,9 +28,6 @@ fetchCurrentRate() #Run first time manually
 scheduler = BackgroundScheduler()
 scheduler.add_job(func=fetchCurrentRate, trigger="interval", seconds=10)
 scheduler.start()
-
-
-
 
 @app.route("/")
 def unkown():
