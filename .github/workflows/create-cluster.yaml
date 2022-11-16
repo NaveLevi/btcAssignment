@@ -15,7 +15,7 @@ env:
   KUBECONFIG_PATH: ./aks-engine-output/kubeconfig/kubeconfig.northeurope.json
 
 
-name: create-and-configure-cluster
+name: create-cluster
 jobs:
   create-cluster:
     runs-on: ubuntu-latest
@@ -48,8 +48,3 @@ jobs:
         name: KUBE_CONFIG
         value: ${{ env.KUBE_CONFIG }}
         pa_token: ${{ secrets.GH_TOKEN }}
-  
-  call-nginx-ingress-deploy:
-    uses: ./.github/workflows/deploy-nginx-ingress.yaml
-    if: ${{ github.event.inputs.deploy-nginx-ingress  == 'true' }} 
-    needs: create-cluster

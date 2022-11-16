@@ -4,15 +4,13 @@ on:
     inputs:
       resason: 
         description: 'reason'
-        default: 'btc-assignment'
-  workflow_call:
-    inputs:
-      resason: 
-        description: 'reason'
-        type: string
-        default: 'btc-assignment'
+        default: ''
+  workflow_run:
+    workflows: [create-cluster]
+    types:
+      - completed
 
-name: helm install nginx-ingress
+name: deploy nginx-ingress
 jobs:
   deploy-nginx-ingress:
     env:
@@ -63,4 +61,3 @@ jobs:
     - name: get pods
       run: |
         kubectl get pods -n nginx-ingress
-
