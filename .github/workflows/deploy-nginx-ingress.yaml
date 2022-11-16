@@ -18,9 +18,6 @@ jobs:
     runs-on: ubuntu-latest
     steps:
 
-    - name: Checkout
-      uses: actions/checkout@v1
-
     - uses: azure/setup-helm@v3
       with:
         version: 'v3.10.1'
@@ -31,9 +28,31 @@ jobs:
         mkdir -p ~/.kube
         echo -n ${{ secrets.KUBE_CONFIG }} | base64 -d > $HOME/.kube/config
         stat $HOME/.kube/config
-    # - name: create namespace
-    #   run: |
-    #     kubectl create namespace nginx-ingress
+        echo "1st try"
+        kubectl config view
+        echo "kubeconfig looks like 1st try:"
+        cat $HOME/.kube/config
+
+    - name: wait for kubernetes api to be ready
+      run: |
+        echo "Waiting for kubernetes api to be ready2"
+        kubectl config view
+        echo "kubeconfig looks like:"
+        cat $HOME/.kube/config
+
+        while ! kubectl get node
+        do
+            echo "Waiting for kubernetes api to be ready3"
+            kubectl config view
+            echo "kubeconfig looks like:"
+            cat $HOME/.kube/config
+            sleep 10
+        done
+
+    - name: wait for all nodes to be ready
+      run: |
+        kubectl wait --for=condition=Ready node --all --timeout=900s
+
     - name: install nginx-ingress
       run: |
         helm repo add ingress-nginx https://kubernetes.github.io/ingress-nginx
@@ -42,3 +61,4 @@ jobs:
     - name: get pods
       run: |
         kubectl get pods -n nginx-ingress
+
