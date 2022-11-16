@@ -4,18 +4,19 @@ on:
     inputs:
       resason: 
         description: 'reason'
-        required: true
+        default: 'btc-assignment'
+  workflow_call:
+    inputs:
+      resason: 
+        description: 'reason'
+        type: string
         default: 'btc-assignment'
 
 name: helm install nginx-ingress
 jobs:
-  delete-cluster:
+  deploy-nginx-ingress:
     runs-on: ubuntu-latest
     steps:
-    - name: Azure Login
-      uses: azure/login@v1
-      with:
-        creds: ${{ secrets.AZURE_CREDENTIALS }}
 
     - name: Checkout
       uses: actions/checkout@v1
@@ -30,7 +31,6 @@ jobs:
         mkdir -p ~/.kube
         echo -n ${{ secrets.KUBE_CONFIG }} | base64 -d > $HOME/.kube/config
         stat $HOME/.kube/config
-        kubectl get ns
     # - name: create namespace
     #   run: |
     #     kubectl create namespace nginx-ingress
