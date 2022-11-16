@@ -15,6 +15,8 @@ on:
 name: helm install nginx-ingress
 jobs:
   deploy-nginx-ingress:
+    env:
+      KUBECONFIG: ./kubeconfig
     runs-on: ubuntu-latest
     steps:
 
@@ -26,26 +28,26 @@ jobs:
     - name: get kubeconfig
       run: |
         mkdir -p ~/.kube
-        echo -n ${{ secrets.KUBE_CONFIG }} | base64 -d > $HOME/.kube/config
-        stat $HOME/.kube/config
+        echo -n ${{ secrets.KUBE_CONFIG }} | base64 -d > ./kubeconfig
+        stat ./kubeconfig
         echo "1st try"
+        echo "KUBECONFIG: $KUBECONFIG"
         kubectl config view
         echo "kubeconfig looks like 1st try:"
-        cat $HOME/.kube/config
+        cat ./kubeconfig
 
     - name: wait for kubernetes api to be ready
       run: |
         echo "Waiting for kubernetes api to be ready2"
+        cat ./kubeconfig
         kubectl config view
         echo "kubeconfig looks like:"
-        cat $HOME/.kube/config
-
         while ! kubectl get node
         do
             echo "Waiting for kubernetes api to be ready3"
             kubectl config view
             echo "kubeconfig looks like:"
-            cat $HOME/.kube/config
+            cat ./kubeconfig
             sleep 10
         done
 
