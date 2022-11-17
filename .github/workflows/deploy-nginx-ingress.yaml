@@ -13,6 +13,7 @@ on:
 name: deploy ingress-nginx
 jobs:
   deploy-ingress-nginx:
+    timeout-minutes: 30
     env:
       KUBECONFIG: ./kubeconfig
     runs-on: ubuntu-latest
@@ -48,4 +49,8 @@ jobs:
         helm upgrade --install --create-namespace -n ingress-nginx ingress-nginx ingress-nginx/ingress-nginx
     - name: Print ingress-nginx LB IP
       run: |
-        echo "The external ip is $(k get svc -n ingress-nginx nginx-ingress-ingress-nginx-controller --output jsonpath='{.status.loadBalancer.ingress[0].ip}')"
+        until [ -n "$(kubectl get svc -n ingress-nginx ingress-nginx-controller -o jsonpath='{.status.loadBalancer.ingress[0].ip}')" ]; do
+            echo "Waiting for LoadBalancer IP"
+            sleep 10
+        done
+        echo "External IP is: $(kubectl get svc -n ingress-nginx ingress-nginx-controller -o jsonpath='{.status.loadBalancer.ingress[0].ip}')"
