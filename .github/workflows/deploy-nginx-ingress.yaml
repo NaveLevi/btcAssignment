@@ -10,9 +10,9 @@ on:
     types:
       - completed
 
-name: deploy nginx-ingress
+name: deploy ingress-nginx
 jobs:
-  deploy-nginx-ingress:
+  deploy-ingress-nginx:
     env:
       KUBECONFIG: ./kubeconfig
     runs-on: ubuntu-latest
@@ -41,11 +41,11 @@ jobs:
       run: |
         kubectl wait --for=condition=Ready node --all --timeout=900s
 
-    - name: install nginx-ingress
+    - name: install ingress-nginx
       run: |
         helm repo add ingress-nginx https://kubernetes.github.io/ingress-nginx
         helm repo update
-        helm upgrade --install --create-namespace -n nginx-ingress nginx-ingress ingress-nginx/ingress-nginx
-    - name: Print nginx-ingress LB IP
+        helm upgrade --install --create-namespace -n ingress-nginx ingress-nginx ingress-nginx/ingress-nginx
+    - name: Print ingress-nginx LB IP
       run: |
-        echo "The external ip is $(k get svc -n nginx-ingress nginx-ingress-ingress-nginx-controller --output jsonpath='{.status.loadBalancer.ingress[0].ip}')"
+        echo "The external ip is $(k get svc -n ingress-nginx nginx-ingress-ingress-nginx-controller --output jsonpath='{.status.loadBalancer.ingress[0].ip}')"
