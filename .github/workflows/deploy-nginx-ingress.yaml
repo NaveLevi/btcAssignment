@@ -10,7 +10,7 @@ on:
     types:
       - completed
 
-name: deploy ingress-nginx
+name: deploy-nginx-ingress
 jobs:
   deploy-ingress-nginx:
     timeout-minutes: 30

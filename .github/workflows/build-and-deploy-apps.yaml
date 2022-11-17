@@ -1,4 +1,4 @@
-name: Build and Deploy Apps
+name: build-and-deploy-apps
 on:
   push:
     branches: [ "master" ]
@@ -7,6 +7,11 @@ on:
       - apps/empty-responder/**
       - chart/**
       - .github/workflows/build-and-deploy-apps.yaml
+  workflow_run:
+    workflows: ["deploy-nginx-ingress"]
+    types:
+      - completed
+
   pull_request:
     branches: [ "master" ]
   workflow_dispatch:
