@@ -1,0 +1,58 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: empty-responder
+  labels:
+    app: empty-responder
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: empty-responder
+  template:
+    metadata:
+      labels:
+        app: empty-responder
+    spec:
+      containers:
+      - name: empty-responder
+        image: "{{ .Values.org }}/empty-responder:latest"
+        imagePullPolicy: Always
+        ports:
+        - containerPort: 5000
+---
+kind: Service
+apiVersion: v1
+metadata:
+  name: empty-responder
+  labels:
+    app: empty-responder
+spec:
+  selector:
+    app: empty-responder
+  ports:
+  - name: http
+    protocol: TCP
+    port: 7070
+    targetPort: 5000
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: empty-responder
+  namespace: default
+  labels:
+    app: empty-responder
+  annotations:
+    kubernetes.io/ingress.class: nginx
+spec:
+  rules:
+  - http:
+      paths:
+      - path: /empty-responder
+        pathType: ImplementationSpecific
+        backend:
+          service:
+            name: empty-responder
+            port:
+              number: 7070

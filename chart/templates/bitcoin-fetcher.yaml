@@ -1,0 +1,65 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: bitcoin-fetcher
+  labels:
+    app: bitcoin-fetcher
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: bitcoin-fetcher
+  template:
+    metadata:
+      labels:
+        app: bitcoin-fetcher
+    spec:
+      containers:
+      - name: bitcoin-fetcher
+        image: "{{ .Values.org }}/bitcoin-fetcher:latest"
+        imagePullPolicy: Always
+        ports:
+        - containerPort: 5000
+---
+kind: Service
+apiVersion: v1
+metadata:
+  name: bitcoin-fetcher
+  labels:
+    app: bitcoin-fetcher
+spec:
+  selector:
+    app: bitcoin-fetcher
+  ports:
+  - name: http
+    protocol: TCP
+    port: 7070
+    targetPort: 5000
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: bitcoin-fetcher
+  namespace: default
+  labels:
+    app: bitcoin-fetcher
+  annotations:
+    kubernetes.io/ingress.class: nginx
+spec:
+  rules:
+  - http:
+      paths:
+      - path: /average
+        pathType: ImplementationSpecific
+        backend:
+          service:
+            name: bitcoin-fetcher
+            port:
+              number: 7070
+      - path: /current
+        pathType: ImplementationSpecific
+        backend:
+          service:
+            name: bitcoin-fetcher
+            port:
+              number: 7070

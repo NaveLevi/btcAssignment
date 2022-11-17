@@ -1,11 +1,12 @@
-name: Build And Deploy Apps
-
+name: Build and Deploy Apps
 on:
   push:
     branches: [ "master" ]
     paths:
       - apps/bitcoin-fetcher/**
       - apps/empty-responder/**
+      - chart/**
+      - .github/workflows/build-and-deploy-apps.yaml
   pull_request:
     branches: [ "master" ]
   workflow_dispatch:
@@ -30,7 +31,6 @@ jobs:
       with:
         username: ${{ secrets.DOCKERHUB_USERNAME }}
         password: ${{ secrets.DOCKERHUB_TOKEN }}
-
     - name: Build the Docker image    
       run: docker build . --tag $dockerHubRepo:latest
     - name: Push the Docker image
@@ -51,8 +51,25 @@ jobs:
       with:
         username: ${{ secrets.DOCKERHUB_USERNAME }}
         password: ${{ secrets.DOCKERHUB_TOKEN }}
-
     - name: Build the Docker image    
       run: docker build . --tag $dockerHubRepo:latest
     - name: Push the Docker image
       run: docker push $dockerHubRepo:latest
+
+  deploy-helm-chart:
+    needs: [build-and-deploy-bitcoin-fetcher, build-and-deploy-empty-responder]
+    runs-on: ubuntu-latest
+    env:
+      KUBECONFIG: ./kubeconfig
+    steps:
+    - uses: actions/checkout@v3
+    - name: get kubeconfig
+      run: |
+        mkdir -p ~/.kube
+        echo -n ${{ secrets.KUBE_CONFIG }} | base64 -d > ./kubeconfig
+    - name: Deploy Helm Chart
+      uses: stefanprodan/kube-tools@v1
+      with:
+        helm: 3.10.1
+        command: |
+          helm upgrade --install btc-assignment ./chart --atomic --timeout 600s --set org=${{ secrets.DOCKERHUB_USERNAME }}
