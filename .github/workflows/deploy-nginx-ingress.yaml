@@ -13,7 +13,7 @@ on:
 name: deploy-nginx-ingress
 jobs:
   deploy-ingress-nginx:
-    timeout-minutes: 30
+    timeout-minutes: 20
     env:
       KUBECONFIG: ./kubeconfig
     runs-on: ubuntu-latest

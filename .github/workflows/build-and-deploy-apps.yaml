@@ -6,7 +6,6 @@ on:
       - apps/bitcoin-fetcher/**
       - apps/empty-responder/**
       - chart/**
-      - .github/workflows/build-and-deploy-apps.yaml
   workflow_run:
     workflows: ["deploy-nginx-ingress"]
     types:
@@ -22,6 +21,7 @@ on:
         default: 'Manual trigger'
 jobs:
   build-and-deploy-bitcoin-fetcher:
+    timeout-minutes: 15
     env:
       appName: bitcoin-fetcher
       dockerHubRepo: "${{ secrets.DOCKERHUB_USERNAME }}/bitcoin-fetcher"

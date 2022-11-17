@@ -9,6 +9,7 @@ on:
 name: delete-cluster
 jobs:
   delete-cluster:
+    timeout-minutes: 20
     runs-on: ubuntu-latest
     steps:
     - name: Azure Login

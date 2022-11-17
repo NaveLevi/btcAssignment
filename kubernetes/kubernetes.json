@@ -3,7 +3,7 @@
   "properties": {
     "orchestratorProfile": {
       "kubernetesConfig": {
-        "networkPlugin": "kubenet"
+        "networkPolicy": "antrea"
       }
     },
     "masterProfile": {
