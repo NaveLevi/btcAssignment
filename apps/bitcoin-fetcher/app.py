@@ -1,7 +1,10 @@
 import requests
 from apscheduler.schedulers.background import BackgroundScheduler
+realCoin = 'usd'
+crypto = 'bitcoin'
 
-url = 'https://api.coingecko.com/api/v3/simple/price?ids=bitcoin&vs_currencies=eur'
+
+url = f'https://api.coingecko.com/api/v3/simple/price?ids={crypto}&vs_currencies={realCoin}'
 
 from flask import Flask
 app = Flask(__name__)
@@ -12,7 +15,7 @@ lastAverage, fetchCount, sum = 0, 0, 0
 def fetchCurrentRate():
     global lastRate, lastAverage, fetchCount, sum
     response = requests.get(url)
-    lastRate = response.json()['bitcoin']['usd']
+    lastRate = response.json()['bitcoin'][realCoin]
     sum += lastRate
     fetchCount+=1
 
