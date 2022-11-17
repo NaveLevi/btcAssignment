@@ -27,25 +27,13 @@ jobs:
       run: |
         mkdir -p ~/.kube
         echo -n ${{ secrets.KUBE_CONFIG }} | base64 -d > ./kubeconfig
-        stat ./kubeconfig
-        echo "1st try"
-        echo "KUBECONFIG: $KUBECONFIG"
-        kubectl config view
-        echo "kubeconfig looks like 1st try:"
-        cat ./kubeconfig
 
     - name: wait for kubernetes api to be ready
       run: |
         echo "Waiting for kubernetes api to be ready2"
-        cat ./kubeconfig
-        kubectl config view
-        echo "kubeconfig looks like:"
         while ! kubectl get node
         do
             echo "Waiting for kubernetes api to be ready3"
-            kubectl config view
-            echo "kubeconfig looks like:"
-            cat ./kubeconfig
             sleep 10
         done
 
@@ -58,6 +46,6 @@ jobs:
         helm repo add ingress-nginx https://kubernetes.github.io/ingress-nginx
         helm repo update
         helm upgrade --install --create-namespace -n nginx-ingress nginx-ingress ingress-nginx/ingress-nginx
-    - name: get pods
+    - name: Print nginx-ingress LB IP
       run: |
-        kubectl get pods -n nginx-ingress
+        echo "The external ip is $(k get svc -n nginx-ingress nginx-ingress-ingress-nginx-controller --output jsonpath='{.status.loadBalancer.ingress[0].ip}')"

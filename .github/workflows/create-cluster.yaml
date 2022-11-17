@@ -6,10 +6,6 @@ on:
         required: true
         default: 'btc-assignment'
         type: string
-      deploy-nginx-ingress:
-        type: boolean
-        description: 'deploy nginx-ingress. Required for 200responder and bitcoin-fetcher to function'
-        default: true
 
 env:
   KUBECONFIG_PATH: ./aks-engine-output/kubeconfig/kubeconfig.northeurope.json
