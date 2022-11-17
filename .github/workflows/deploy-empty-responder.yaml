@@ -1,10 +1,10 @@
-name: Build 200responder
+name: Build empty-responder
 
 on:
   push:
     branches: [ "master" ]
     paths:
-      - apps/200responder/**
+      - apps/empty-responder/**
   pull_request:
     branches: [ "master" ]
   workflow_dispatch:
@@ -14,13 +14,13 @@ on:
         required: true
         default: 'Manual trigger'
 env:
-  dockerHubRepo: navelevi/200responder
+  dockerHubRepo: navelevi/empty-responder
 jobs:
   build:
     runs-on: ubuntu-latest
     defaults:
       run:
-        working-directory: ./apps/200responder
+        working-directory: ./apps/empty-responder
     steps:
     - uses: actions/checkout@v3
     - name: Login to DockerHub
