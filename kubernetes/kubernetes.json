@@ -1,6 +1,11 @@
 {
   "apiVersion": "vlabs",
   "properties": {
+    "orchestratorProfile": {
+      "kubernetesConfig": {
+        "networkPlugin": "kubenet"
+      }
+    },
     "masterProfile": {
       "count": 1,
       "dnsPrefix": "",
