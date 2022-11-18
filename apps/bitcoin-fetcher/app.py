@@ -33,7 +33,7 @@ def average():
     if len(pricesArray) < 59:
         return f"Yet to calculate the 10 minutes average. You should try again in {600-(len(pricesArray)*10)} seconds"
     else:
-        return (sum(pricesArray)/len(pricesArray))
+        return (str(sum(pricesArray)/len(pricesArray)))
 
 
 @app.route("/current")
