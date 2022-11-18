@@ -1,10 +1,6 @@
 
 on: 
   workflow_dispatch:
-    inputs:
-      resason: 
-        description: 'reason'
-        default: ''
   workflow_run:
     workflows: [create-cluster]
     types:
