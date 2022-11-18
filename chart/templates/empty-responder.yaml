@@ -16,7 +16,7 @@ spec:
     spec:
       containers:
       - name: empty-responder
-        image: "{{ .Values.org }}/empty-responder:latest"
+        image: "{{ .Values.org }}/empty-responder:{{ .Values.image-tag }}"
         imagePullPolicy: Always
         ports:
         - containerPort: 5000

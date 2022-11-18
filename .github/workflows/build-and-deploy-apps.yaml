@@ -37,9 +37,9 @@ jobs:
         username: ${{ secrets.DOCKERHUB_USERNAME }}
         password: ${{ secrets.DOCKERHUB_TOKEN }}
     - name: Build the Docker image    
-      run: docker build . --tag $dockerHubRepo:latest
+      run: docker build . --tag $dockerHubRepo:${{ github.sha }}
     - name: Push the Docker image
-      run: docker push $dockerHubRepo:latest
+      run: docker push $dockerHubRepo:${{ github.sha }}
 
   build-and-deploy-empty-responder:
     env:
@@ -57,9 +57,9 @@ jobs:
         username: ${{ secrets.DOCKERHUB_USERNAME }}
         password: ${{ secrets.DOCKERHUB_TOKEN }}
     - name: Build the Docker image    
-      run: docker build . --tag $dockerHubRepo:latest
+      run: docker build . --tag $dockerHubRepo:${{ github.sha }}
     - name: Push the Docker image
-      run: docker push $dockerHubRepo:latest
+      run: docker push $dockerHubRepo:${{ github.sha }}
 
   deploy-helm-chart:
     needs: [build-and-deploy-bitcoin-fetcher, build-and-deploy-empty-responder]
@@ -77,4 +77,4 @@ jobs:
       with:
         helm: 3.10.1
         command: |
-          helm upgrade --install btc-assignment ./chart --atomic --timeout 600s --set org=${{ secrets.DOCKERHUB_USERNAME }}
+          helm upgrade --install btc-assignment ./chart --atomic --timeout 600s --set org=${{ secrets.DOCKERHUB_USERNAME }} --set image-tag=${{ github.sha }}
