@@ -1,2 +1,3 @@
-org: navelevi
-image-tag: latest
+image:
+  org: navelevi
+  tag: latest

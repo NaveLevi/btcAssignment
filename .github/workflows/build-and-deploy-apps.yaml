@@ -77,4 +77,4 @@ jobs:
       with:
         helm: 3.10.1
         command: |
-          helm upgrade --install btc-assignment ./chart --atomic --timeout 600s --set org=${{ secrets.DOCKERHUB_USERNAME }} --set image-tag=${{ github.sha }}
+          helm upgrade --install btc-assignment ./chart --atomic --timeout 600s --set image.org=${{ secrets.DOCKERHUB_USERNAME }} --set image.tag=${{ github.sha }}

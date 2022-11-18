@@ -16,7 +16,7 @@ spec:
     spec:
       containers:
       - name: bitcoin-fetcher
-        image: "{{ .Values.org }}/bitcoin-fetcher:{{ .Values.image-tag }}"
+        image: "{{ .Values.image.org }}/bitcoin-fetcher:{{ .Values.image.tag }}"
         imagePullPolicy: Always
         ports:
         - containerPort: 5000
