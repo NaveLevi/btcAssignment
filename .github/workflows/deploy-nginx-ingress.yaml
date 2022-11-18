@@ -13,7 +13,7 @@ on:
 name: deploy-nginx-ingress
 jobs:
   deploy-ingress-nginx:
-    timeout-minutes: 20
+    timeout-minutes: 30
     env:
       KUBECONFIG: ./kubeconfig
     runs-on: ubuntu-latest
@@ -41,13 +41,18 @@ jobs:
     - name: wait for all pods to be ready
       run: |
         kubectl wait --for=condition=Ready pod --all -A --timeout=900s
-        sleep 120
 
     - name: install ingress-nginx
       run: |
         helm repo add ingress-nginx https://kubernetes.github.io/ingress-nginx
         helm repo update
         helm upgrade --install --create-namespace -n ingress-nginx ingress-nginx ingress-nginx/ingress-nginx --atomic --timeout 600s 
+        until [ "$(helm upgrade --install --create-namespace -n ingress-nginx ingress-nginx ingress-nginx/ingress-nginx --atomic --timeout 600s)" ]; do
+            echo "Helm install failed. Waiting 60 seoncds for kubernetes"
+            sleep 60
+        done
+        echo "ingress-nginx installed"
+
     - name: Print ingress-nginx LB IP
       run: |
         until [ -n "$(kubectl get svc -n ingress-nginx ingress-nginx-controller -o jsonpath='{.status.loadBalancer.ingress[0].ip}')" ]; do
