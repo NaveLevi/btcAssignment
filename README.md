@@ -22,3 +22,6 @@ Create a `DOCKERHUB_USERNAME` secret with your Dockerhub username.
 - Run the create-cluster GitHub workflow, which will also trigger the deployment of ingress-nginx and the microservices.  
 You can see the LoadBalancer IP in the output of the deploy-ingress-nginx workflow.  
 From that point forward, you no longer need to manually deploy anything, the microsevices will be built and redeployed automatically with each code change you make.
+
+
+After you're done, you can run the delete-cluster workflow to delete the cluster, the GitHub kubeconfig secret and all of its resources.

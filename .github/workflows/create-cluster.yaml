@@ -35,7 +35,6 @@ jobs:
           ./get-akse.sh
           aks-engine deploy --location northeurope --api-model ./kubernetes/kubernetes.json -g ${{ github.event.inputs.cluster-name }} -p ${{ github.event.inputs.cluster-name }} -o "./aks-engine-output"
           kube_config_data=$(cat ${{ env.KUBECONFIG_PATH }} | base64 -w 0)
-          echo $kube_config_data #TODO: remove
           echo "::add-mask::$kube_config_data"
           echo "KUBE_CONFIG=$kube_config_data" >> $GITHUB_ENV
 
