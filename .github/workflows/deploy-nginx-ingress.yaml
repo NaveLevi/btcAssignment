@@ -42,12 +42,11 @@ jobs:
       run: |
         helm repo add ingress-nginx https://kubernetes.github.io/ingress-nginx
         helm repo update
-        helm upgrade --install --create-namespace -n ingress-nginx ingress-nginx ingress-nginx/ingress-nginx --atomic --timeout 600s 
-        until [ "$(helm upgrade --install --create-namespace -n ingress-nginx ingress-nginx ingress-nginx/ingress-nginx --atomic --timeout 600s)" ]; do
-            echo "Helm install failed. Waiting 60 seoncds for kubernetes"
+        while ! helm upgrade --install --create-namespace -n ingress-nginx ingress-nginx ingress-nginx/ingress-nginx --atomic --wait --timeout 600s
+        do
+            echo "retrying helm install"
             sleep 60
         done
-        echo "ingress-nginx installed"
 
     - name: Print ingress-nginx LB IP
       run: |
