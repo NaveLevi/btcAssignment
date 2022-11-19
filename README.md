@@ -20,5 +20,5 @@ I looked into automating the creation of the repos, but it's not officially supp
 - Create a Dockerhub access token and copy it as a secret to GitHub. It should be called `DOCKERHUB_TOKEN` - [Link to Dockerhub Settings](https://hub.docker.com/settings/security).  
 Create a `DOCKERHUB_USERNAME` secret with your Dockerhub username.
 - Run the create-cluster GitHub workflow, which will also trigger the deployment of ingress-nginx and the microservices.  
-You can see the LoadBalancer IP in the output of the deploy-nginx-ingress workflow.  
+You can see the LoadBalancer IP in the output of the deploy-ingress-nginx workflow.  
 From that point forward, you no longer need to manually deploy anything, the microsevices will be built and redeployed automatically with each code change you make.
