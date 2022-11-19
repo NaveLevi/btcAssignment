@@ -37,6 +37,7 @@ jobs:
     - name: wait for all pods to be ready
       run: |
         kubectl wait --for=condition=Ready pod --all -A --timeout=900s
+        sleep 180
 
     - name: install ingress-nginx
       run: |
